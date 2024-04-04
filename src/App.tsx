@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import EddiTcgMainLobby from "./eddi_tcg_main_lobby/EddiTcgMainLobby";
 import Home from "./home/Home";
+import NavigationBar from "./layout/NavigationLayout";
 
 const theme = createTheme({
     typography: {
@@ -14,6 +15,7 @@ const App: React.FC = () => {
     return (
         <ThemeProvider theme={theme}>
             <BrowserRouter>
+                <NavigationBar />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/eddi-tcg-main-lobby" element={<EddiTcgMainLobby />} />

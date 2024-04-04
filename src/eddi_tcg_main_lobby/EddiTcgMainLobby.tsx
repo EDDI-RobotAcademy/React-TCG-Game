@@ -47,24 +47,23 @@ const EddiTcgMainLobby: React.FC = () => {
     const mainLobbyAudioUrl = "/assets/eddi_tcg_game/music/main_lobby/lobby-menu.mp3";
 
     return (
-        // <Container>
-        //     <AudioPlayer url={mainLobbyAudioUrl} />
-        //     <MyScene />
-        // </Container>
-        <div style={{
-            width: '100vw',
-            height: '100vh',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            zIndex: -1,
-            backgroundImage: `url(/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png)`,
-            backgroundSize: '100vw 100%', // Auto width, 100% height
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center', // Center the background image
-        }}>
-            <AudioPlayer url={mainLobbyAudioUrl}/>
-            <MyScene/>
+        <div>
+            <div style={{paddingTop: '64px'}}></div>
+            <div style={{
+                width: '100vw',
+                height: '100vh',
+                position: 'fixed',
+                top: 32,
+                left: 0,
+                zIndex: -1,
+                backgroundImage: `url(/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png)`,
+                backgroundSize: '100vw calc(100vh - 64px)',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center', // Center the background image
+            }}>
+                <AudioPlayer url={mainLobbyAudioUrl}/>
+                <MyScene/>
+            </div>
         </div>
     );
 };
