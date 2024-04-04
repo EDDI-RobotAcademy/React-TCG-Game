@@ -3,23 +3,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-const BackgroundPlane: React.FC = () => {
-    const texture = new THREE.TextureLoader().load('/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png');
-    const { viewport } = useThree();
-    const aspectRatio = viewport.width / viewport.height;
-    const planeWidth = 31.2; // 가로 크기
-    const planeHeight = planeWidth / aspectRatio; // 화면 비율에 맞춰 세로 크기 조정
-
-    return (
-        <mesh position={[0, 0, -5]}>
-            <planeGeometry args={[planeWidth, planeHeight]} />
-            <meshBasicMaterial attach="material" map={texture} side={THREE.DoubleSide} />
-        </mesh>
-    );
-};
-
 const RotatingBox: React.FC = () => {
-    const boxRef = useRef<THREE.Mesh>(null);
+    const boxRef = React.useRef<THREE.Mesh>(null);
 
     useFrame(() => {
         if (boxRef.current) {
@@ -41,7 +26,6 @@ const MyScene: React.FC = () => {
         <Canvas style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: -1 }}>
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />
-            <BackgroundPlane />
             <RotatingBox />
             <OrbitControls />
         </Canvas>
@@ -50,7 +34,9 @@ const MyScene: React.FC = () => {
 
 const EddiTcgMainLobby: React.FC = () => {
     return (
-        <MyScene />
+        <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: -1, backgroundImage: `url(/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png)`, backgroundSize: 'cover' }}>
+            <MyScene />
+        </div>
     );
 };
 
