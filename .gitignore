@@ -27,3 +27,6 @@ yarn-error.log*
 
 # exclude assets
 assets
+
+# exclude .idea
+.idea

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import entranceBattleFieldButton from '../assets/eddi_tcg_game/images/main_lobby/entrance_battle_field_button.png';
 import myCardButton from '../assets/eddi_tcg_game/images/main_lobby/myCardButton.png';
 import shopButton from '../assets/eddi_tcg_game/images/main_lobby/shopButton.png';
+import {Button, Grid} from "@mui/material";
 
 // const Container = styled.div`
 //     width: 100%;
@@ -67,7 +68,7 @@ const EddiTcgMainLobby: React.FC = () => {
             <div style={{paddingTop: '64px'}}></div>
             <div style={{
                 width: '100vw',
-                height: '100vh',
+                height: '100%',
                 position: 'fixed',
                 top: 32,
                 left: 0,
@@ -80,14 +81,15 @@ const EddiTcgMainLobby: React.FC = () => {
                 <AudioPlayer url={mainLobbyAudioUrl}/>
                 <MyScene/>
             </div>
-            <div className="image-grid" style={{ paddingTop: '8%' }}>
+            <Grid container spacing={2} style={{ paddingTop: '8%', paddingLeft: '7%', position: 'absolute', top: '40%', transform: 'translateY(-50%)' }}>
                 {images.map((image, index) => (
-                    <button key={index} className="image-button" onClick={() => handleButtonClick(image.route)}
-                            style={{background: 'none', border: 'none', padding: 0, paddingLeft: '6%', marginBottom: '10px' }}>
-                        <img src={image.src} alt={`image-${index}`} style={{maxWidth: '96%', maxHeight: '100px'}}/>
-                    </button>
+                    <Grid item xs={12} key={index} justifyContent="flex-start">
+                        <Button onClick={() => handleButtonClick(image.route)} style={{ width: '84%', textAlign: 'left', height: '8%', borderRadius: 0 }}>
+                            <img src={image.src} alt={`image-${index}`} style={{ width: '60%', height: 'auto' }} />
+                        </Button>
+                    </Grid>
                 ))}
-            </div>
+            </Grid>
         </div>
     );
 };
