@@ -3,7 +3,11 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import AudioPlayer from "../audio_player/AudioPlayer";
-// import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+
+import entranceBattleFieldButton from '../assets/eddi_tcg_game/images/main_lobby/entrance_battle_field_button.png';
+import myCardButton from '../assets/eddi_tcg_game/images/main_lobby/myCardButton.png';
+import shopButton from '../assets/eddi_tcg_game/images/main_lobby/shopButton.png';
 
 // const Container = styled.div`
 //     width: 100%;
@@ -45,6 +49,18 @@ const MyScene: React.FC = () => {
 
 const EddiTcgMainLobby: React.FC = () => {
     const mainLobbyAudioUrl = "/assets/eddi_tcg_game/music/main_lobby/lobby-menu.mp3";
+    const navigate = useNavigate();
+
+    const images = [
+        { src: '/assets/eddi_tcg_game/images/main_lobby/entrance_battle_field_button.png', route: '/eddi-tcg-game-battle-field' },
+        { src: '/assets/eddi_tcg_game/images/main_lobby/my_card_button.png', route: '/eddi-tcg-game-my-card' },
+        { src: '/assets/eddi_tcg_game/images/main_lobby/shop_button.png', route: '/eddi-tcg-game-card-shop' },
+    ];
+
+
+    const handleButtonClick = (route: string) => {
+        navigate(route);
+    };
 
     return (
         <div>
@@ -63,6 +79,14 @@ const EddiTcgMainLobby: React.FC = () => {
             }}>
                 <AudioPlayer url={mainLobbyAudioUrl}/>
                 <MyScene/>
+            </div>
+            <div className="image-grid" style={{ paddingTop: '8%' }}>
+                {images.map((image, index) => (
+                    <button key={index} className="image-button" onClick={() => handleButtonClick(image.route)}
+                            style={{background: 'none', border: 'none', padding: 0, paddingLeft: '6%', marginBottom: '10px' }}>
+                        <img src={image.src} alt={`image-${index}`} style={{maxWidth: '96%', maxHeight: '100px'}}/>
+                    </button>
+                ))}
             </div>
         </div>
     );
