@@ -2,6 +2,17 @@ import React, { useRef, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
+import AudioPlayer from "../audio_player/AudioPlayer";
+// import styled from 'styled-components';
+
+// const Container = styled.div`
+//     width: 100%;
+//     height: 100vh;
+//     background-image: url('/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png');
+//     background-size: cover;
+//     background-repeat: no-repeat;
+//     background-position: center;
+// `;
 
 const RotatingBox: React.FC = () => {
     const boxRef = React.useRef<THREE.Mesh>(null);
@@ -33,9 +44,27 @@ const MyScene: React.FC = () => {
 };
 
 const EddiTcgMainLobby: React.FC = () => {
+    const mainLobbyAudioUrl = "/assets/eddi_tcg_game/music/main_lobby/lobby-menu.mp3";
+
     return (
-        <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: -1, backgroundImage: `url(/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png)`, backgroundSize: 'cover' }}>
-            <MyScene />
+        // <Container>
+        //     <AudioPlayer url={mainLobbyAudioUrl} />
+        //     <MyScene />
+        // </Container>
+        <div style={{
+            width: '100vw',
+            height: '100vh',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: -1,
+            backgroundImage: `url(/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png)`,
+            backgroundSize: '100vw 100%', // Auto width, 100% height
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center', // Center the background image
+        }}>
+            <AudioPlayer url={mainLobbyAudioUrl}/>
+            <MyScene/>
         </div>
     );
 };
