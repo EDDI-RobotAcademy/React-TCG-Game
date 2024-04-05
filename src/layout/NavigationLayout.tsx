@@ -6,7 +6,7 @@ const NavigationBar: React.FC = () => {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    My App
+                    EDDI-TCG
                 </Typography>
                 <Link href="/" color="inherit" underline="none" sx={{ mr: 2 }}>
                     Home
