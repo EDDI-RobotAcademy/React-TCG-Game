@@ -26,7 +26,8 @@ yarn-error.log*
 .env
 
 # exclude assets
-assets
+public/assets/eddi_tcg_game/**/*.mp3
+public/assets/eddi_tcg_game/**/*.png
 
 # exclude .idea
 .idea
