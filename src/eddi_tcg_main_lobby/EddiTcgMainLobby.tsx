@@ -80,7 +80,7 @@ const EddiTcgMainLobby: React.FC = () => {
     }, []);
 
     const images = [
-        { src: '/assets/eddi_tcg_game/images/main_lobby/entrance_battle_field_button.png', route: '/eddi-tcg-game-battle-field', heightPercentage: 0.1 },
+        { src: '/assets/eddi_tcg_game/images/main_lobby/entrance_battle_field_button.png', route: '/eddi-tcg-battle-field', heightPercentage: 0.1 },
         { src: '/assets/eddi_tcg_game/images/main_lobby/my_card_button.png', route: '/eddi-tcg-my-card', heightPercentage: 0.1 },
         { src: '/assets/eddi_tcg_game/images/main_lobby/shop_button.png', route: '/eddi-tcg-card-shop', heightPercentage: 0.1 },
     ];
