@@ -7,22 +7,28 @@ import { useNavigate } from 'react-router-dom';
 
 const imagePath = "/assets/eddi_tcg_game/images/battle_field_card/134.png";
 const cardBackFramePath = "/assets/eddi_tcg_game/images/battle_field/card_back_frame.png";
+const attackPowerImagePath = "/assets/eddi_tcg_game/images/unit_card_attack_power/20.png";
 
-const ImagePlane: React.FC<{ frontImage: string; backImage: string }> = ({ frontImage, backImage }) => {
+const ImagePlane: React.FC<{ frontImage: string; backImage: string, attackPowerImage: string }> = ({ frontImage, backImage, attackPowerImage }) => {
     const textureFront = useMemo(() => new THREE.TextureLoader().load(frontImage), [frontImage]); // 앞면 이미지 로드
     const textureBack = useMemo(() => new THREE.TextureLoader().load(backImage), [backImage]); // 뒷면 이미지 로드
+    const textureAttackPower = useMemo(() => new THREE.TextureLoader().load(attackPowerImage), [attackPowerImage])
 
     return (
         <group>
             {/* 앞면 */}
             <mesh position={[0, 0, 0]}>
-                <planeGeometry args={[2, 2]} />
-                <meshBasicMaterial map={textureFront} side={THREE.FrontSide} />
+                <planeGeometry args={[2, 2]}/>
+                <meshBasicMaterial map={textureFront} side={THREE.FrontSide}/>
             </mesh>
             {/* 뒷면 */}
             <mesh position={[0, 0, 0]}>
-                <planeGeometry args={[2, 2]} />
-                <meshBasicMaterial map={textureBack} side={THREE.BackSide} />
+                <planeGeometry args={[2, 2]}/>
+                <meshBasicMaterial map={textureBack} side={THREE.BackSide}/>
+            </mesh>
+            <mesh position={[0.95, -0.95, 0]} renderOrder={1}>
+                <planeGeometry args={[1, 1]}/>
+                <meshBasicMaterial map={textureAttackPower} transparent side={THREE.FrontSide} depthTest={false}/>
             </mesh>
         </group>
     );
@@ -30,10 +36,10 @@ const ImagePlane: React.FC<{ frontImage: string; backImage: string }> = ({ front
 
 const BattleFieldScene: React.FC = () => {
     return (
-        <Canvas style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0 }}>
+        <Canvas style={{width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0}}>
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />
-            <ImagePlane frontImage={imagePath} backImage={cardBackFramePath} />
+            <ImagePlane frontImage={imagePath} backImage={cardBackFramePath} attackPowerImage={attackPowerImagePath} />
             <OrbitControls
                 enableRotate={true} // 회전 활성화
                 enablePan={true} // 패닝 활성화
