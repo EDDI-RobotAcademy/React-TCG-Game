@@ -105,24 +105,75 @@ const PickableYourHandCard: React.FC = () => {
     }, [yourHandList, scene]);
 
     // 마우스 이벤트 핸들러
+    // const handleMouseDown = (event: MouseEvent) => {
+    //     event.preventDefault();
+    //     const raycaster = new THREE.Raycaster();
+    //     const mouse = new THREE.Vector2();
+    //     mouse.x = (event.clientX / gl.domElement.clientWidth) * 2 - 1;
+    //     mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
+    //
+    //     console.log('event.clientX: ', event.clientX, ', event.clientY: ', event.clientY)
+    //     // console.log('mouse.x: ', mouse.x, ', mouse.y: ', mouse.y)
+    //
+    //     raycaster.setFromCamera(mouse, camera);
+    //     const intersects = raycaster.intersectObjects(cards);
+    //     if (intersects.length > 0) {
+    //         console.log('object selected!')
+    //         const selectedObject = intersects[0].object as THREE.Mesh;
+    //         setSelectedCard(selectedObject);
+    //         setMouseDown(true);
+    //         setStartPosition({ x: event.clientX, y: event.clientY });
+    //     }
+    // };
+
     const handleMouseDown = (event: MouseEvent) => {
+        console.log('마우스 클릭 이벤트 발생:', event.button);
         event.preventDefault();
+
+        // 마우스 버튼에 따라 다른 동작 수행
+        switch (event.button) {
+            case 0: // 좌클릭
+                handleLeftClick(event);
+                break;
+            case 2: // 우클릭
+                handleRightClick(event);
+                break;
+            default:
+                break;
+        }
+    };
+
+    // 좌클릭 처리
+    const handleLeftClick = (event: MouseEvent) => {
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / gl.domElement.clientWidth) * 2 - 1;
         mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
 
-        console.log('event.clientX: ', event.clientX, ', event.clientY: ', event.clientY)
-        // console.log('mouse.x: ', mouse.x, ', mouse.y: ', mouse.y)
-
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(cards);
         if (intersects.length > 0) {
-            console.log('object selected!')
+            console.log('좌클릭: 오브젝트 선택됨');
             const selectedObject = intersects[0].object as THREE.Mesh;
             setSelectedCard(selectedObject);
             setMouseDown(true);
             setStartPosition({ x: event.clientX, y: event.clientY });
+        }
+    };
+
+    // 우클릭 처리
+    const handleRightClick = (event: MouseEvent) => {
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        mouse.x = (event.clientX / gl.domElement.clientWidth) * 2 - 1;
+        mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(cards);
+        if (intersects.length > 0) {
+            console.log('우클릭: 오브젝트 선택됨');
+            // 우클릭 처리 추가
+            // 여기에 원하는 우클릭 동작을 추가합니다.
         }
     };
 
