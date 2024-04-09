@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
 import useYourHandStore from "./state/store";
 import CardAttachedShape from "./CardAttachedShape";
+import getCardInfo, {getCardKinds} from "../common/CardInfoReader";
 
 // 다음 카드의 위치를 계산하는 함수
 const getNextPosition = (index: number): { x: number; y: number } => {
@@ -87,6 +88,11 @@ const PickableYourHandCard: React.FC = () => {
             const newCards: THREE.Mesh[] = [];
             for (let cardIndex = 0; cardIndex < yourHandList.length; cardIndex++) {
                 const cardId = yourHandList[cardIndex];
+
+                const cardNumber = cardId; // 찾고자 하는 카드의 번호
+                const cardKinds = getCardKinds(cardNumber);
+                console.log('cardKinds: ', cardKinds)
+
                 const imagePath = `/assets/eddi_tcg_game/images/battle_field_card/${cardId}.png`;
                 const texture = await loadImageTexture(imagePath);
                 const cardMesh = createBattleFieldCardMesh(texture, cardIndex); // index 전달
