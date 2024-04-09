@@ -1,54 +1,46 @@
 import React, {useState, useRef, useEffect, useMemo} from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import {OrbitControls, OrthographicCamera} from '@react-three/drei';
 import * as THREE from 'three';
 import AudioPlayer from "../audio_player/AudioPlayer";
 import { useNavigate } from 'react-router-dom';
-
-const imagePath = "/assets/eddi_tcg_game/images/battle_field_card/134.png";
-const cardBackFramePath = "/assets/eddi_tcg_game/images/battle_field/card_back_frame.png";
-const attackPowerImagePath = "/assets/eddi_tcg_game/images/unit_card_attack_power/20.png";
-
-const ImagePlane: React.FC<{ frontImage: string; backImage: string, attackPowerImage: string }> = ({ frontImage, backImage, attackPowerImage }) => {
-    const textureFront = useMemo(() => new THREE.TextureLoader().load(frontImage), [frontImage]); // 앞면 이미지 로드
-    const textureBack = useMemo(() => new THREE.TextureLoader().load(backImage), [backImage]); // 뒷면 이미지 로드
-    const textureAttackPower = useMemo(() => new THREE.TextureLoader().load(attackPowerImage), [attackPowerImage])
-
-    return (
-        <group>
-            {/* 앞면 */}
-            <mesh position={[0, 0, 0]}>
-                <planeGeometry args={[2, 2]}/>
-                <meshBasicMaterial map={textureFront} side={THREE.FrontSide}/>
-            </mesh>
-            {/* 뒷면 */}
-            <mesh position={[0, 0, 0]}>
-                <planeGeometry args={[2, 2]}/>
-                <meshBasicMaterial map={textureBack} side={THREE.BackSide}/>
-            </mesh>
-            <mesh position={[0.95, -0.95, 0]} renderOrder={1}>
-                <planeGeometry args={[1, 1]}/>
-                <meshBasicMaterial map={textureAttackPower} transparent side={THREE.FrontSide} depthTest={false}/>
-            </mesh>
-        </group>
-    );
-};
+import PickableYourHandCard from "../your_hand/PickableYourHandCard";
+import useYourHandStore from "../your_hand/state/store";
+import {WebGLRenderer} from "three";
 
 const BattleFieldScene: React.FC = () => {
+    // 상태를 가져옵니다.
+    const initYourHand = useYourHandStore(state => state.initHand);
+
+    // 초기값을 설정합니다.
+    useEffect(() => {
+        initYourHand([19, 134, 2, 31, 32]);
+    }, [initYourHand]);
+
+    // WebGLRenderingContext 초기화를 위한 초기화 함수
+    const initGL = (gl: WebGLRenderer) => {
+        gl.setClearColor(0xffffff, 0); // 배경 색상을 흰색으로 설정합니다.
+    };
+
+    console.log(window.innerWidth);
+    console.log(window.innerHeight);
+
     return (
-        <Canvas style={{width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0}}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
-            <ImagePlane frontImage={imagePath} backImage={cardBackFramePath} attackPowerImage={attackPowerImagePath} />
-            <OrbitControls
-                enableRotate={true} // 회전 활성화
-                enablePan={true} // 패닝 활성화
-                enableZoom={true} // 줌 활성화
-                enableDamping={true} // 감속 활성화
-                dampingFactor={0.25} // 감속 계수
-                minPolarAngle={0} // 최소 pitch 각도 설정
-                maxPolarAngle={2 * Math.PI}
+        <Canvas style={{width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0, backgroundColor: 'rgba(255, 255, 255, 0)'}}
+                onCreated={({ gl }) => initGL(gl)}>
+            <OrthographicCamera
+                makeDefault  // 이 카메라를 기본 카메라로 설정합니다.
+                left={0}  // 뷰의 왼쪽 경계
+                right={window.innerWidth}  // 뷰의 오른쪽 경계
+                top={window.innerHeight}  // 뷰의 위쪽 경계
+                bottom={0}  // 뷰의 아래쪽 경계
+                near={-1}  // 가까운 투영면
+                far={1}  // 먼 투영면
             />
+            {/*<ambientLight intensity={0.5} />*/}
+            {/*<pointLight position={[10, 10, 10]} />*/}
+            {/*<ImagePlane frontImage={imagePath} backImage={cardBackFramePath} attackPowerImage={attackPowerImagePath} />*/}
+            <PickableYourHandCard />
         </Canvas>
     );
 };
