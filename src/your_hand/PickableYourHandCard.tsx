@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
 import useYourHandStore from "./state/store";
+import CardAttachedShape from "./CardAttachedShape";
 
 // 다음 카드의 위치를 계산하는 함수
 const getNextPosition = (index: number): { x: number; y: number } => {
     const cardWidth = 105; // 카드의 너비
-    const cardHeight = cardWidth * 1.615; // 카드의 높이
+    const cardHeight = cardWidth * 1.515; // 카드의 높이
     const rowSize = 5; // 시야에 보이는 행의 카드 수
 
     // 행과 열 계산
@@ -34,7 +35,7 @@ const getNextPosition = (index: number): { x: number; y: number } => {
 
     // 카드의 x, y 좌표 계산
     const x = start_x + index * (cardWidth + each_margin_ratio * window.innerWidth);
-    const y = 0.08950920245 * window.innerHeight;
+    const y = 0.10950920245 * window.innerHeight;
 
     console.log('cardWidth + each_margin_ratio * window.innerWidth: ', cardWidth + each_margin_ratio * window.innerWidth)
     console.log('each_margin_ratio * window.innerWidth: ', each_margin_ratio * window.innerWidth)
@@ -60,7 +61,7 @@ const createBattleFieldCardMesh = (texture: THREE.Texture, cardIndex: number): T
     // 1108 / 1600 = 0.6925
 
     const width = 105
-    const height = width * 1.615
+    const height = width * 1.515
 
     const geometry = new THREE.PlaneGeometry(width, height);
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture });
@@ -157,11 +158,17 @@ const PickableYourHandCard: React.FC = () => {
         };
     }, [gl, handleMouseDown, handleMouseMove, handleMouseUp]);
 
-    return null; // react-three-fiber에서는 렌더링할 JSX가 필요하지 않습니다.
+    // return null;
+    return (
+        <>
+            {cards.map((card, index) => (
+                <React.Fragment key={index}>
+                    <primitive object={card} />
+                    <CardAttachedShape cardPosition={card.position} />
+                </React.Fragment>
+            ))}
+        </>
+    );
 };
 
 export default PickableYourHandCard;
-
-
-
-
