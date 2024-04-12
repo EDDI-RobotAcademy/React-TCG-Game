@@ -1,62 +1,97 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import {CardKinds} from "../common/CardKinds";
+import WeaponGenerator from "./unit_card/WeaponGenerator";
+import {Mesh, MeshBasicMaterial, PlaneGeometry, Vector3} from "three";
 
-interface BattleFieldCardGeneratorProps {
-    frontImagePath: string;
-    backImagePath: string;
+export default class BattleFieldCardGenerator {
+    private scene: THREE.Scene;
+    private cardList: THREE.Mesh[];
+
+    constructor(scene: THREE.Scene) {
+        this.scene = scene;
+        this.cardList = [];
+    }
+
+    public async generateCard(cardId: string, cardIndex: number, cardKind: CardKinds, position: Vector3): Promise<Mesh[] | null> {
+        const imagePath = `/assets/eddi_tcg_game/images/battle_field_card/${cardId}.png`;
+        const texture = await this.loadImageTexture(imagePath);
+
+        let cardMeshes: THREE.Mesh[] | null = null;
+
+        switch (cardKind) {
+            case CardKinds.UnitCard:
+                cardMeshes = await this.createUnitCard(texture, cardIndex, position);
+                break;
+            case CardKinds.TrapCard:
+                cardMeshes = [this.createTrapCard(texture, cardIndex)];
+                break;
+            case CardKinds.ItemCard:
+                cardMeshes = [this.createItemCard(texture, cardIndex)];
+                break;
+            case CardKinds.SupportCard:
+                cardMeshes = [this.createSupportCard(texture, cardIndex)];
+                break;
+            case CardKinds.ToolCard:
+                cardMeshes = [this.createToolCard(texture, cardIndex)];
+                break;
+            case CardKinds.EnergyCard:
+                cardMeshes = [this.createEnergyCard(texture, cardIndex)];
+                break;
+            default:
+                console.error('Unknown card kind:', cardKind);
+                break;
+        }
+
+        if (cardMeshes) {
+            for (const cardMesh of cardMeshes) {
+                this.scene.add(cardMesh);
+                this.cardList.push(cardMesh);
+            }
+        }
+
+        return cardMeshes;
+    }
+
+    private async loadImageTexture(imagePath: string): Promise<THREE.Texture> {
+        return new Promise((resolve) => {
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(imagePath, (texture) => {
+                texture.colorSpace = THREE.SRGBColorSpace;
+                resolve(texture);
+            });
+        });
+    }
+
+    private createUnitCard(texture: THREE.Texture, cardIndex: number, position: Vector3): Promise<Mesh[] | null> {
+        const weaponGenerator = new WeaponGenerator(this.scene, this.cardList, position);
+        const weaponMesh = weaponGenerator.generateWeapon("/assets/eddi_tcg_game/images/unit_card_attack_power/20.png")
+
+        return weaponMesh
+    }
+
+    private createTrapCard(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
+        // Implement creation of trap card mesh here
+        return new THREE.Mesh(); // Replace with actual implementation
+    }
+
+    private createItemCard(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
+        // Implement creation of item card mesh here
+        return new THREE.Mesh(); // Replace with actual implementation
+    }
+
+    private createSupportCard(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
+        // Implement creation of support card mesh here
+        return new THREE.Mesh(); // Replace with actual implementation
+    }
+
+    private createToolCard(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
+        // Implement creation of tool card mesh here
+        return new THREE.Mesh(); // Replace with actual implementation
+    }
+
+    private createEnergyCard(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
+        // Implement creation of energy card mesh here
+        return new THREE.Mesh(); // Replace with actual implementation
+    }
 }
-
-const BattleFieldCardGenerator: React.FC<BattleFieldCardGeneratorProps> = ({ frontImagePath, backImagePath }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-
-    useEffect(() => {
-        if (!canvasRef.current) return;
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        const textureLoader = new THREE.TextureLoader();
-        const frontTexture = textureLoader.load(frontImagePath);
-        const backTexture = textureLoader.load(backImagePath);
-
-        const geometry = new THREE.PlaneGeometry(1, 1);
-        const frontMaterial = new THREE.MeshBasicMaterial({ map: frontTexture });
-        const backMaterial = new THREE.MeshBasicMaterial({ map: backTexture });
-        const cardFrontMesh = new THREE.Mesh(geometry, frontMaterial);
-        const cardBackMesh = new THREE.Mesh(geometry, backMaterial);
-
-        scene.add(cardFrontMesh);
-        scene.add(cardBackMesh);
-
-        // 카드의 위치 및 크기 등을 조정할 수 있습니다.
-        cardFrontMesh.position.set(0, 0, 0);
-        cardBackMesh.position.set(0, 0, -0.01); // 약간의 거리를 두어 겹치지 않도록 합니다.
-
-        camera.position.z = 5;
-
-        const animate = () => {
-            requestAnimationFrame(animate);
-
-            cardFrontMesh.rotation.x += 0.01;
-            cardFrontMesh.rotation.y += 0.01;
-            cardBackMesh.rotation.x += 0.01;
-            cardBackMesh.rotation.y += 0.01;
-
-            renderer.render(scene, camera);
-        };
-
-        animate();
-
-        return () => {
-            scene.remove(cardFrontMesh);
-            scene.remove(cardBackMesh);
-            renderer.dispose();
-        };
-    }, [frontImagePath, backImagePath]);
-
-    return null;
-};
-
-export default BattleFieldCardGenerator;
