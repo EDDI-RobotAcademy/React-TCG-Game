@@ -2,7 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import {CardKinds} from "../common/CardKinds";
 import WeaponGenerator from "./unit_card/WeaponGenerator";
-import {Mesh, MeshBasicMaterial, PlaneGeometry, Vector3} from "three";
+import {
+    BufferGeometry,
+    Material,
+    Mesh,
+    MeshBasicMaterial,
+    NormalBufferAttributes,
+    Object3DEventMap,
+    PlaneGeometry,
+    Vector3
+} from "three";
+import HpGenerator from "./unit_card/HpGenerator";
 
 export default class BattleFieldCardGenerator {
     private scene: THREE.Scene;
@@ -63,11 +73,24 @@ export default class BattleFieldCardGenerator {
         });
     }
 
-    private createUnitCard(texture: THREE.Texture, cardIndex: number, position: Vector3): Promise<Mesh[] | null> {
-        const weaponGenerator = new WeaponGenerator(this.scene, this.cardList, position);
-        const weaponMesh = weaponGenerator.generateWeapon("/assets/eddi_tcg_game/images/unit_card_attack_power/20.png")
+    private async createUnitCard(texture: THREE.Texture, cardIndex: number, position: Vector3): Promise<THREE.Mesh[] | null> {
+        const unitCard = new THREE.Mesh(); // Initialize unitCard as a Mesh
 
-        return weaponMesh
+        const weaponGenerator = new WeaponGenerator(this.scene, this.cardList, position);
+        const weaponMesh = await weaponGenerator.generateWeapon("/assets/eddi_tcg_game/images/unit_card_attack_power/20.png");
+
+        console.log('position: ', position);
+        const hpGenerator = new HpGenerator(this.scene, this.cardList, position);
+        const hpMesh = await hpGenerator.generateHp("/assets/eddi_tcg_game/images/unit_card_hp/20.png");
+
+        if (weaponMesh) {
+            unitCard.add(weaponMesh);
+        }
+        if (hpMesh) {
+            unitCard.add(hpMesh);
+        }
+
+        return [unitCard];
     }
 
     private createTrapCard(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
