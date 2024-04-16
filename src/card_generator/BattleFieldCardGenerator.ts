@@ -13,6 +13,7 @@ import {
     Vector3
 } from "three";
 import HpGenerator from "./unit_card/HpGenerator";
+import RaceGenerator from "./unit_card/RaceGenerator";
 
 export default class BattleFieldCardGenerator {
     private scene: THREE.Scene;
@@ -79,15 +80,20 @@ export default class BattleFieldCardGenerator {
         const weaponGenerator = new WeaponGenerator(this.scene, this.cardList, position);
         const weaponMesh = await weaponGenerator.generateWeapon("/assets/eddi_tcg_game/images/unit_card_attack_power/20.png");
 
-        console.log('position: ', position);
         const hpGenerator = new HpGenerator(this.scene, this.cardList, position);
         const hpMesh = await hpGenerator.generateHp("/assets/eddi_tcg_game/images/unit_card_hp/20.png");
+
+        const raceGenerator = new RaceGenerator(this.scene, this.cardList, position);
+        const raceMesh = await raceGenerator.generateRace("/assets/eddi_tcg_game/images/unit_card_race/2.png");
 
         if (weaponMesh) {
             unitCard.add(weaponMesh);
         }
         if (hpMesh) {
             unitCard.add(hpMesh);
+        }
+        if (raceMesh) {
+            unitCard.add(raceMesh);
         }
 
         return [unitCard];
