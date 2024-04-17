@@ -14,7 +14,7 @@ const BattleFieldScene: React.FC = () => {
 
     // 초기값을 설정합니다.
     useEffect(() => {
-        initYourHand([19, 134, 2, 31, 32]);
+        initYourHand([19, 151, 2, 8, 93]);
     }, [initYourHand]);
 
     // WebGLRenderingContext 초기화를 위한 초기화 함수

@@ -8,7 +8,7 @@ import BattleFieldCardGenerator from "../card_generator/BattleFieldCardGenerator
 import BattleFieldCardRepository from "../battle_field_card/infra/BattleFieldCardRepository";
 
 const battleFieldCardRepository = new BattleFieldCardRepository();
-const cardWidth = 75
+const cardWidth = 105
 
 // 다음 카드의 위치를 계산하는 함수
 const getNextPosition = (index: number): { x: number; y: number } => {

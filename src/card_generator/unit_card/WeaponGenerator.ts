@@ -37,13 +37,13 @@ export default class WeaponGenerator {
 
     private createWeaponMesh(texture: THREE.Texture): THREE.Mesh {
         // 무기 메시 생성 및 설정
-        const weaponSize = 50;
+        const weaponSize = 70;
         const weaponGeometry = new THREE.PlaneGeometry(weaponSize, weaponSize * 1.651);
         const weaponMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
         const weaponMesh = new THREE.Mesh(weaponGeometry, weaponMaterial);
 
         // 무기 메시의 위치 설정
-        weaponMesh.position.set(this.cardPosition.x + 32, this.cardPosition.y - 57, this.cardPosition.z);
+        weaponMesh.position.set(this.cardPosition.x + 45, this.cardPosition.y - 77, this.cardPosition.z);
 
         // 무기 메시의 회전 설정
         weaponMesh.rotation.set(0, 0, 0); // 원하는 회전 각도로 설정

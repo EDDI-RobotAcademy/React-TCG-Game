@@ -37,13 +37,13 @@ export default class CardTypeGenerator {
 
     private createCardTypeMesh(texture: THREE.Texture): THREE.Mesh {
         // 무기 메시 생성 및 설정
-        const cardTypeMeshSize = 32;
+        const cardTypeMeshSize = 44;
         const cardTypeMeshGeometry = new THREE.PlaneGeometry(cardTypeMeshSize, cardTypeMeshSize);
         const cardTypeMeshMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
         const cardTypeMeshMesh = new THREE.Mesh(cardTypeMeshGeometry, cardTypeMeshMaterial);
 
         // 무기 메시의 위치 설정
-        cardTypeMeshMesh.position.set(this.cardPosition.x + 36, this.cardPosition.y - 59, this.cardPosition.z);
+        cardTypeMeshMesh.position.set(this.cardPosition.x + 50, this.cardPosition.y - 80, this.cardPosition.z);
 
         // 무기 메시의 회전 설정
         cardTypeMeshMesh.rotation.set(0, 0, 0); // 원하는 회전 각도로 설정

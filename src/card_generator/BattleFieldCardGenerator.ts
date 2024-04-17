@@ -32,6 +32,8 @@ export default class BattleFieldCardGenerator {
 
         let cardMeshes: THREE.Mesh[] | null = null;
 
+        console.log("Card Generation: ", cardKind)
+
         switch (cardKind) {
             case CardKinds.UnitCard:
                 cardMeshes = await this.createUnitCard(cardId, texture, cardIndex, position);
@@ -49,7 +51,7 @@ export default class BattleFieldCardGenerator {
                 cardMeshes = [this.createToolCard(texture, cardIndex)];
                 break;
             case CardKinds.EnergyCard:
-                cardMeshes = [this.createEnergyCard(texture, cardIndex)];
+                cardMeshes = await this.createEnergyCard(cardId, texture, cardIndex, position);
                 break;
             default:
                 console.error('Unknown card kind:', cardKind);
@@ -121,8 +123,16 @@ export default class BattleFieldCardGenerator {
         const raceGenerator = new RaceGenerator(this.scene, this.cardList, position);
         const raceMesh = await raceGenerator.generateRace(racePath);
 
+        const cardKinds = getCardKinds(parseInt(cardId, 10));
+        const cardKindsPath = `/assets/eddi_tcg_game/images/card_type_mark/${cardKinds}.png`;
+        const cardKindsGenerator = new CardTypeGenerator(this.scene, this.cardList, position);
+        const cardKindsMesh = await cardKindsGenerator.generateCardType(cardKindsPath);
+
         if (raceMesh) {
             itemCardAttachedShapeList.add(raceMesh);
+        }
+        if (cardKindsMesh) {
+            itemCardAttachedShapeList.add(cardKindsMesh);
         }
 
         return [itemCardAttachedShapeList]
@@ -156,8 +166,26 @@ export default class BattleFieldCardGenerator {
         return new THREE.Mesh(); // Replace with actual implementation
     }
 
-    private createEnergyCard(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
-        // Implement creation of energy card mesh here
-        return new THREE.Mesh(); // Replace with actual implementation
+    private async createEnergyCard(cardId: string, texture: THREE.Texture, cardIndex: number, position: Vector3): Promise<THREE.Mesh[] | null> {
+        const energyCardAttachedShapeList = new THREE.Mesh();
+
+        const raceNumber = getCardRace(parseInt(cardId, 10));
+        const racePath = `/assets/eddi_tcg_game/images/unit_card_race/${raceNumber}.png`;
+        const raceGenerator = new RaceGenerator(this.scene, this.cardList, position);
+        const raceMesh = await raceGenerator.generateRace(racePath);
+
+        const cardKinds = getCardKinds(parseInt(cardId, 10));
+        const cardKindsPath = `/assets/eddi_tcg_game/images/card_type_mark/${cardKinds}.png`;
+        const cardKindsGenerator = new CardTypeGenerator(this.scene, this.cardList, position);
+        const cardKindsMesh = await cardKindsGenerator.generateCardType(cardKindsPath);
+
+        if (raceMesh) {
+            energyCardAttachedShapeList.add(raceMesh);
+        }
+        if (cardKindsMesh) {
+            energyCardAttachedShapeList.add(cardKindsMesh);
+        }
+
+        return [energyCardAttachedShapeList]
     }
 }

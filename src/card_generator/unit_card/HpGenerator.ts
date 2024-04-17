@@ -37,13 +37,13 @@ export default class HpGenerator {
 
     private createHpMesh(texture: THREE.Texture): THREE.Mesh {
         // 무기 메시 생성 및 설정
-        const hpSize = 23;
+        const hpSize = 34;
         const hpGeometry = new THREE.PlaneGeometry(hpSize, hpSize * 1.6545);
         const hpMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
         const hpMesh = new THREE.Mesh(hpGeometry, hpMaterial);
 
         // 무기 메시의 위치 설정
-        hpMesh.position.set(this.cardPosition.x - 34, this.cardPosition.y - 55, this.cardPosition.z);
+        hpMesh.position.set(this.cardPosition.x - 54, this.cardPosition.y - 72, this.cardPosition.z);
 
         // 무기 메시의 회전 설정
         hpMesh.rotation.set(0, 0, 0); // 원하는 회전 각도로 설정
