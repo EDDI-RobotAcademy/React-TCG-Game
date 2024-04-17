@@ -14,6 +14,7 @@ import {
 } from "three";
 import HpGenerator from "./unit_card/HpGenerator";
 import RaceGenerator from "./unit_card/RaceGenerator";
+import {getCardAttackDamage, getCardHealthPoint, getCardKinds, getCardRace} from "../common/CardInfoReader";
 
 export default class BattleFieldCardGenerator {
     private scene: THREE.Scene;
@@ -32,7 +33,7 @@ export default class BattleFieldCardGenerator {
 
         switch (cardKind) {
             case CardKinds.UnitCard:
-                cardMeshes = await this.createUnitCard(texture, cardIndex, position);
+                cardMeshes = await this.createUnitCard(cardId, texture, cardIndex, position);
                 break;
             case CardKinds.TrapCard:
                 cardMeshes = [this.createTrapCard(texture, cardIndex)];
@@ -74,17 +75,27 @@ export default class BattleFieldCardGenerator {
         });
     }
 
-    private async createUnitCard(texture: THREE.Texture, cardIndex: number, position: Vector3): Promise<THREE.Mesh[] | null> {
-        const unitCard = new THREE.Mesh(); // Initialize unitCard as a Mesh
+    private async createUnitCard(cardId: string, texture: THREE.Texture, cardIndex: number, position: Vector3): Promise<THREE.Mesh[] | null> {
+        const unitCard = new THREE.Mesh();
+        console.log('createUnitCard()')
 
+        const weaponDamage = getCardAttackDamage(parseInt(cardId, 10));
+        const weaponPath = `/assets/eddi_tcg_game/images/unit_card_attack_power/${weaponDamage}.png`;
         const weaponGenerator = new WeaponGenerator(this.scene, this.cardList, position);
-        const weaponMesh = await weaponGenerator.generateWeapon("/assets/eddi_tcg_game/images/unit_card_attack_power/20.png");
+        const weaponMesh = await weaponGenerator.generateWeapon(weaponPath);
+        console.log('createUnitCard() -> weaponMesh: ', weaponMesh)
 
+        const hpNumber = getCardHealthPoint(parseInt(cardId, 10));
+        const hpPath = `/assets/eddi_tcg_game/images/unit_card_hp/${hpNumber}.png`;
         const hpGenerator = new HpGenerator(this.scene, this.cardList, position);
-        const hpMesh = await hpGenerator.generateHp("/assets/eddi_tcg_game/images/unit_card_hp/20.png");
+        const hpMesh = await hpGenerator.generateHp(hpPath);
+        console.log('createUnitCard() -> hpMesh: ', hpMesh)
 
+        const raceNumber = getCardRace(parseInt(cardId, 10));
+        const racePath = `/assets/eddi_tcg_game/images/unit_card_race/${raceNumber}.png`;
         const raceGenerator = new RaceGenerator(this.scene, this.cardList, position);
-        const raceMesh = await raceGenerator.generateRace("/assets/eddi_tcg_game/images/unit_card_race/2.png");
+        const raceMesh = await raceGenerator.generateRace(racePath);
+        console.log('createUnitCard() -> raceMesh: ', raceMesh)
 
         if (weaponMesh) {
             unitCard.add(weaponMesh);

@@ -1,4 +1,5 @@
 import csv
+import json
 
 def convert_csv_to_js(csv_file):
     card_data = []
@@ -8,20 +9,22 @@ def convert_csv_to_js(csv_file):
         for row in reader:
             if row['공격력'] == '':
                 row['공격력'] = 0
-            skill_1 = row.get('스킬 1', None)
+
+            hp = row.get('체력', None)
+            if hp is None or hp.strip() == '':
+                hp = None
+            else:
+                hp = int(hp)
 
             # Handle the case when '스킬 1' does not exist
-            if skill_1 is None:
-                skill_1 = ''
+            skill_1 = row.get('스킬 1', '')
 
-            skill_2 = row.get('스킬 2', None)
-
-            if skill_2 is None:
-                skill_2 = ''
+            # Handle the case when '스킬 2' does not exist
+            skill_2 = row.get('스킬 2', '')
 
             required_energy = row['필요_에너지']
             if required_energy.strip() == '':
-                required_energy = 0  # or any default value you prefer
+                required_energy = 0
             else:
                 required_energy = int(required_energy)
 
@@ -34,6 +37,7 @@ def convert_csv_to_js(csv_file):
                 '병종': row['병종'],
                 '필요_에너지': required_energy,
                 '공격력': int(row['공격력']),
+                '체력': hp,
                 '패시브': row['패시브'],
                 '스킬': row['스킬'],
                 '스킬 개수': int(row['스킬 개수']),
@@ -59,13 +63,12 @@ def convert_csv_to_js(csv_file):
 def write_js_file(card_data, output_file):
     with open(output_file, 'w') as jsfile:
         jsfile.write("const cardData = ")
-        jsfile.write(str(card_data))
+        json.dump(card_data, jsfile, ensure_ascii=False, indent=4)
         jsfile.write(";\n\nexport default cardData;")
 
 # CSV 파일에서 데이터 읽기
 csv_file = 'data.csv'
 card_data = convert_csv_to_js(csv_file)
-print(card_data)
 
 # JavaScript 파일로 변환하여 저장
 output_file = '../../src/common/every_card_info.js'

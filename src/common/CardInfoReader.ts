@@ -1,4 +1,4 @@
-import cardData from "./every_card_info";
+import cardData from "../common/every_card_info";
 import {CardKinds} from "./CardKinds";
 
 function getCardInfo(cardNumber: number) {
@@ -40,6 +40,11 @@ export function getCardKinds(cardNumber: number): CardKinds {
 export function getCardAttackDamage(cardNumber: number): number | undefined {
     const cardInfo = cardData.find(card => card['카드번호'] === cardNumber);
     return cardInfo ? cardInfo['공격력'] : undefined;
+}
+
+export function getCardHealthPoint(cardNumber: number): number | undefined {
+    const cardInfo = cardData.find(card => card['카드번호'] === cardNumber);
+    return cardInfo && cardInfo['체력'] !== null ? cardInfo['체력'] : undefined;
 }
 
 export default getCardInfo;
