@@ -23,9 +23,9 @@ export function getCardKinds(cardNumber: number): CardKinds {
         case 1:
             return CardKinds.UnitCard
         case 2:
-            return CardKinds.TrapCard
-        case 3:
             return CardKinds.ItemCard
+        case 3:
+            return CardKinds.TrapCard
         case 4:
             return CardKinds.SupportCard
         case 5:

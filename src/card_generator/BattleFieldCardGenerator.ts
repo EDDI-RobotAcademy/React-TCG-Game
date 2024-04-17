@@ -38,11 +38,11 @@ export default class BattleFieldCardGenerator {
             case CardKinds.UnitCard:
                 cardMeshes = await this.createUnitCard(cardId, texture, cardIndex, position);
                 break;
-            case CardKinds.TrapCard:
-                cardMeshes = [this.createTrapCard(texture, cardIndex)];
-                break;
             case CardKinds.ItemCard:
                 cardMeshes = await this.createItemCard(cardId, texture, cardIndex, position);
+                break;
+            case CardKinds.TrapCard:
+                cardMeshes = [this.createTrapCard(texture, cardIndex)];
                 break;
             case CardKinds.SupportCard:
                 cardMeshes = await this.createSupportCard(cardId, texture, cardIndex, position);
@@ -116,6 +116,7 @@ export default class BattleFieldCardGenerator {
     }
 
     private async createItemCard(cardId: string, texture: THREE.Texture, cardIndex: number, position: Vector3): Promise<THREE.Mesh[] | null> {
+        console.log('createItemCard()')
         const itemCardAttachedShapeList = new THREE.Mesh();
 
         const raceNumber = getCardRace(parseInt(cardId, 10));
