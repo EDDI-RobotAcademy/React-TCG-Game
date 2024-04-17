@@ -8,10 +8,10 @@ import BattleFieldCardGenerator from "../card_generator/BattleFieldCardGenerator
 import BattleFieldCardRepository from "../battle_field_card/infra/BattleFieldCardRepository";
 
 const battleFieldCardRepository = new BattleFieldCardRepository();
+const cardWidth = 75
 
 // 다음 카드의 위치를 계산하는 함수
 const getNextPosition = (index: number): { x: number; y: number } => {
-    const cardWidth = 105; // 카드의 너비
     const cardHeight = cardWidth * 1.515; // 카드의 높이
     const rowSize = 5; // 시야에 보이는 행의 카드 수
 
@@ -65,10 +65,10 @@ const createBattleFieldCardMesh = (texture: THREE.Texture, cardIndex: number): T
     // 427 / 1600 = 0.266875 -> 427 + 65 / 1600 -> 492 / 1600 = 0.3075
     // 1108 / 1600 = 0.6925
 
-    const width = 105
-    const height = width * 1.515
+    // const cardWidth = 105
+    const height = cardWidth * 1.618
 
-    const geometry = new THREE.PlaneGeometry(width, height);
+    const geometry = new THREE.PlaneGeometry(cardWidth, height);
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture });
     const cardMesh = new THREE.Mesh(geometry, material);
     // cardMesh.position.set(0.3075 * window.innerWidth, 0.15950920245 * window.innerHeight, 0); // 카드의 위치 설정
@@ -102,8 +102,7 @@ const PickableYourHandCard: React.FC = () => {
             for (let cardIndex = 0; cardIndex < yourHandList.length; cardIndex++) {
                 const cardId = yourHandList[cardIndex];
 
-                const cardNumber = cardId; // 찾고자 하는 카드의 번호
-                const cardKinds = getCardKinds(cardNumber);
+                const cardKinds = getCardKinds(cardId);
                 console.log('cardKinds: ', cardKinds)
 
                 const imagePath = `/assets/eddi_tcg_game/images/battle_field_card/${cardId}.png`;

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {Mesh, Scene, Vector3} from "three";
 
-export default class HpGenerator {
+export default class CardTypeGenerator {
     private scene: THREE.Scene;
     private cardList: THREE.Mesh[];
     private cardPosition: Vector3
@@ -12,17 +12,17 @@ export default class HpGenerator {
         this.cardPosition = cardPosition
     }
 
-    public async generateHp(texturePath: string): Promise<THREE.Mesh | null> {
+    public async generateCardType(texturePath: string): Promise<THREE.Mesh | null> {
         const texture = await this.loadTexture(texturePath);
         if (!texture) return null;
 
-        const hpMesh = this.createHpMesh(texture);
-        if (!hpMesh) return null;
+        const cardTypeMesh = this.createCardTypeMesh(texture);
+        if (!cardTypeMesh) return null;
 
-        this.scene.add(hpMesh);
+        this.scene.add(cardTypeMesh);
         // this.cardList.push(weaponMesh);
 
-        return hpMesh;
+        return cardTypeMesh;
     }
 
     private async loadTexture(texturePath: string): Promise<THREE.Texture | null> {
@@ -35,19 +35,19 @@ export default class HpGenerator {
         });
     }
 
-    private createHpMesh(texture: THREE.Texture): THREE.Mesh {
+    private createCardTypeMesh(texture: THREE.Texture): THREE.Mesh {
         // 무기 메시 생성 및 설정
-        const hpSize = 23;
-        const hpGeometry = new THREE.PlaneGeometry(hpSize, hpSize * 1.6545);
-        const hpMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-        const hpMesh = new THREE.Mesh(hpGeometry, hpMaterial);
+        const cardTypeMeshSize = 32;
+        const cardTypeMeshGeometry = new THREE.PlaneGeometry(cardTypeMeshSize, cardTypeMeshSize);
+        const cardTypeMeshMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+        const cardTypeMeshMesh = new THREE.Mesh(cardTypeMeshGeometry, cardTypeMeshMaterial);
 
         // 무기 메시의 위치 설정
-        hpMesh.position.set(this.cardPosition.x - 34, this.cardPosition.y - 55, this.cardPosition.z);
+        cardTypeMeshMesh.position.set(this.cardPosition.x + 36, this.cardPosition.y - 59, this.cardPosition.z);
 
         // 무기 메시의 회전 설정
-        hpMesh.rotation.set(0, 0, 0); // 원하는 회전 각도로 설정
+        cardTypeMeshMesh.rotation.set(0, 0, 0); // 원하는 회전 각도로 설정
 
-        return hpMesh;
+        return cardTypeMeshMesh;
     }
 }

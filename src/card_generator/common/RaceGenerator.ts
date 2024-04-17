@@ -37,13 +37,13 @@ export default class RaceGenerator {
 
     private createRaceMesh(texture: THREE.Texture): THREE.Mesh {
         // 무기 메시 생성 및 설정
-        const raceSize = 44;
+        const raceSize = 32;
         const raceGeometry = new THREE.PlaneGeometry(raceSize, raceSize);
         const raceMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
         const raceMesh = new THREE.Mesh(raceGeometry, raceMaterial);
 
         // 무기 메시의 위치 설정
-        raceMesh.position.set(this.cardPosition.x + 50, this.cardPosition.y + 78, this.cardPosition.z);
+        raceMesh.position.set(this.cardPosition.x + 37, this.cardPosition.y + 60, this.cardPosition.z);
 
         // 무기 메시의 회전 설정
         raceMesh.rotation.set(0, 0, 0); // 원하는 회전 각도로 설정
