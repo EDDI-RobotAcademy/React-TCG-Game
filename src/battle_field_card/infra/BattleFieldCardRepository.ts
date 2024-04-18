@@ -61,17 +61,4 @@ export default class BattleFieldCardRepository {
         const nextIndex = parseInt(this.nextCardIndex) + 1;
         this.nextCardIndex = nextIndex.toString();
     }
-
-    // private createCardMesh(texture: THREE.Texture, cardIndex: number): THREE.Mesh {
-    //     // 카드 메시 생성 및 설정
-    //     const cardSize = 100;
-    //     const cardGeometry = new THREE.PlaneGeometry(cardSize, cardSize * 1.651);
-    //     const cardMaterial = new THREE.MeshBasicMaterial({map: texture, transparent: true});
-    //     const cardMesh = new THREE.Mesh(cardGeometry, cardMaterial);
-    //
-    //     // 카드 메시의 위치 설정
-    //     cardMesh.position.set(cardIndex * 120, 0, 0); // 예시로 가로로 나열되도록 설정
-    //
-    //     return cardMesh;
-    // }
 }

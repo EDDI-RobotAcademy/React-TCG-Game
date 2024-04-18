@@ -37,9 +37,6 @@ const BattleFieldScene: React.FC = () => {
                 near={-1}  // 가까운 투영면
                 far={1}  // 먼 투영면
             />
-            {/*<ambientLight intensity={0.5} />*/}
-            {/*<pointLight position={[10, 10, 10]} />*/}
-            {/*<ImagePlane frontImage={imagePath} backImage={cardBackFramePath} attackPowerImage={attackPowerImagePath} />*/}
             <PickableYourHandCard />
         </Canvas>
     );

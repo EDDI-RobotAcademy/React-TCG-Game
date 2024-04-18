@@ -82,10 +82,7 @@ const PickableYourHandCard: React.FC = () => {
     // 상태를 가져옵니다.
     const yourHandList = useYourHandStore(state => state.yourHandList);
     const { scene, camera, gl } = useThree();
-    // const [cards, setCards] = useState<THREE.Mesh[]>([]);
-    // const [cardList, setCardList] = useState<THREE.Mesh[]>([]);
     const [cardList, setCardList] = useState<{ mesh: THREE.Mesh; index: number }[]>([]);
-    // const [group, setGroup] = useState<THREE.Group | null>(null);
     const [selectedCard, setSelectedCard] = useState<THREE.Mesh | null>(null);
     const [mouseDown, setMouseDown] = useState<boolean>(false);
 
@@ -95,8 +92,6 @@ const PickableYourHandCard: React.FC = () => {
     useEffect(() => {
         const loadCards = async () => {
             const cardGenerator = new BattleFieldCardGenerator(scene);
-            // const newGroup: THREE.Mesh[] = [];
-            // const newGroup = new THREE.Group()
             const newCardList: { mesh: THREE.Mesh, index: number }[] = [];
 
             for (let cardIndex = 0; cardIndex < yourHandList.length; cardIndex++) {
@@ -108,8 +103,6 @@ const PickableYourHandCard: React.FC = () => {
                 const imagePath = `/assets/eddi_tcg_game/images/battle_field_card/${cardId}.png`;
                 const texture = await loadImageTexture(imagePath);
                 const cardMesh = createBattleFieldCardMesh(texture, cardIndex); // index 전달
-                // scene.add(cardMesh); // 카드를 scene에 추가
-                // newGroup.push(cardMesh);
 
                 const cardAttachedList = await cardGenerator.generateCard(cardId.toString(), cardIndex, cardKinds, cardMesh.position);
 
@@ -120,37 +113,11 @@ const PickableYourHandCard: React.FC = () => {
                 newCardList.push(cardObject);
 
                 battleFieldCardRepository.addCardAttachedInfo(cardAttachedList)
-
-                // const cardAttachedShape = CardAttachedShape({cardPosition: cardMesh.position});
-                // newGroup.add(cardAttachedShape)
-
             }
             setCardList(newCardList);
         };
         loadCards();
     }, [yourHandList]);
-
-    // 마우스 이벤트 핸들러
-    // const handleMouseDown = (event: MouseEvent) => {
-    //     event.preventDefault();
-    //     const raycaster = new THREE.Raycaster();
-    //     const mouse = new THREE.Vector2();
-    //     mouse.x = (event.clientX / gl.domElement.clientWidth) * 2 - 1;
-    //     mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
-    //
-    //     console.log('event.clientX: ', event.clientX, ', event.clientY: ', event.clientY)
-    //     // console.log('mouse.x: ', mouse.x, ', mouse.y: ', mouse.y)
-    //
-    //     raycaster.setFromCamera(mouse, camera);
-    //     const intersects = raycaster.intersectObjects(cards);
-    //     if (intersects.length > 0) {
-    //         console.log('object selected!')
-    //         const selectedObject = intersects[0].object as THREE.Mesh;
-    //         setSelectedCard(selectedObject);
-    //         setMouseDown(true);
-    //         setStartPosition({ x: event.clientX, y: event.clientY });
-    //     }
-    // };
 
     const handleMouseDown = (event: MouseEvent) => {
         console.log('마우스 클릭 이벤트 발생:', event.button);
@@ -177,9 +144,7 @@ const PickableYourHandCard: React.FC = () => {
         mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
-        // const intersects = raycaster.intersectObjects(group);
-        // const intersects = group ? raycaster.intersectObjects(group.children) : [];
-        // const intersects = raycaster.intersectObjects(cardList);
+
         const meshes = cardList.map(cardObject => cardObject.mesh);
         const index = cardList.map(cardObject => cardObject.index);
         const intersects = raycaster.intersectObjects(meshes);
@@ -205,9 +170,7 @@ const PickableYourHandCard: React.FC = () => {
         mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
-        // const intersects = raycaster.intersectObjects(group);
-        // const intersects = group ? raycaster.intersectObjects(group.children) : [];
-        // const intersects = raycaster.intersectObjects(cardList);
+
         const meshes = cardList.map(cardObject => cardObject.mesh);
         const intersects = raycaster.intersectObjects(meshes);
 
@@ -254,7 +217,6 @@ const PickableYourHandCard: React.FC = () => {
             });
 
             setCardAttachedList(cardAttachedList);
-            // battleFieldCardRepository.addCardAttachedInfo(cardAttachedList)
         }
 
         setStartPosition({ x: event.clientX, y: event.clientY });
@@ -276,28 +238,7 @@ const PickableYourHandCard: React.FC = () => {
         };
     }, [gl, handleMouseDown, handleMouseMove, handleMouseUp]);
 
-    // console.log('group: ', group, ', group.children: ', group?.children)
-
     return null;
-
-    // return (
-    //     <group>
-    //         {group && group.children.map((child, index) => (
-    //             <primitive object={child} key={index} />
-    //         ))}
-    //     </group>
-    // );
-
-    // return (
-    //     <>
-    //         {cards.map((card, index) => (
-    //             <React.Fragment key={index}>
-    //                 <primitive object={card} />
-    //                 <CardAttachedShape cardPosition={card.position} />
-    //             </React.Fragment>
-    //         ))}
-    //     </>
-    // );
 };
 
 export default PickableYourHandCard;
