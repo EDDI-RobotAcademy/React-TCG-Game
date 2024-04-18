@@ -43,33 +43,6 @@ const EddiTcgCardShop: React.FC = () => {
     const cardShopAudioUrl = "/assets/eddi_tcg_game/music/card_shop/card-shop-menu.mp3";
     const navigate = useNavigate();
 
-    // const [buttonSize, setButtonSize] = useState({ width: 0, height: 0 });
-    // const [buttonMargin, setButtonMargin] = useState(0);
-    //
-    // useEffect(() => {
-    //     const handleResize = () => {
-    //         const windowHeight = window.innerHeight;
-    //         console.log('width: ', window.innerWidth)
-    //         console.log('height: ', window.innerHeight)
-    //
-    //         const buttonHeightRatio = 0.12; // 버튼 높이를 화면 높이의 비율로 설정 (예: 8%)
-    //         const newButtonHeight = windowHeight * buttonHeightRatio;
-    //
-    //         const buttonWidthRatio = 0.46; // 버튼 너비를 화면 너비의 비율로 설정 (예: 30%)
-    //         const newButtonWidth = window.innerWidth * buttonWidthRatio;
-    //
-    //         const buttonMarginRatio = 0.1; // 버튼 간격을 화면 높이의 비율로 설정 (예: 1%)
-    //         const newButtonMargin = windowHeight * buttonMarginRatio;
-    //
-    //         setButtonSize({ width: newButtonWidth, height: newButtonHeight });
-    //         setButtonMargin(newButtonMargin);
-    //     };
-    //
-    //     handleResize(); // 초기 렌더링 시에도 크기 설정
-    //     window.addEventListener('resize', handleResize); // 창 크기 변경 시 크기 업데이트
-    //     return () => window.removeEventListener('resize', handleResize); // Clean-up 함수 등록
-    // }, []);
-
     const raceImages = [
         { src: '/assets/eddi_tcg_game/images/card_shop/all_button.png', route: '/eddi-tcg-game-battle-field' },
         { src: '/assets/eddi_tcg_game/images/card_shop/select_undead.png', route: '/eddi-tcg-game-my-card' },
@@ -124,23 +97,6 @@ const EddiTcgCardShop: React.FC = () => {
                     <img src={raceImages[0].src} alt={`image-0`} style={{width: '100%', height: '100%'}}/>
                 </Button>
             </div>
-            {/*<div>*/}
-            {/*    <div style={{ position: 'absolute', top: '32%', left: '7%', width: '84%', marginBottom: `${buttonMargin}px` }}>*/}
-            {/*        <Button onClick={() => handleButtonClick(images[0].route)} style={{ width: `${buttonSize.width}px`, height: `${buttonSize.height}px`, borderRadius: 0 }}>*/}
-            {/*            <img src={images[0].src} alt={`image-0`} style={{ width: '100%', height: '100%' }} />*/}
-            {/*        </Button>*/}
-            {/*    </div>*/}
-            {/*    <div style={{ position: 'absolute', top: '44%', left: '7%', width: '84%', marginBottom: `${buttonMargin}px` }}>*/}
-            {/*        <Button onClick={() => handleButtonClick(images[1].route)} style={{ width: `${buttonSize.width}px`, height: `${buttonSize.height}px`, borderRadius: 0 }}>*/}
-            {/*            <img src={images[1].src} alt={`image-1`} style={{ width: '100%', height: '100%' }} />*/}
-            {/*        </Button>*/}
-            {/*    </div>*/}
-            {/*    <div style={{ position: 'absolute', top: '56%', left: '7%', width: '84%', marginBottom: `${buttonMargin}px` }}>*/}
-            {/*        <Button onClick={() => handleButtonClick(images[2].route)} style={{ width: `${buttonSize.width}px`, height: `${buttonSize.height}px`, borderRadius: 0 }}>*/}
-            {/*            <img src={images[2].src} alt={`image-2`} style={{ width: '100%', height: '100%' }} />*/}
-            {/*        </Button>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
         </div>
     );
 };

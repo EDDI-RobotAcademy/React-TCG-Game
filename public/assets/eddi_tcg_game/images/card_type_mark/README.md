@@ -1,0 +1,1 @@
+# Card Type Mark Images

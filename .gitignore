@@ -31,3 +31,7 @@ public/assets/eddi_tcg_game/**/*.png
 
 # exclude .idea
 .idea
+
+# exclude .csv
+.csv
+common/every_card_info.js

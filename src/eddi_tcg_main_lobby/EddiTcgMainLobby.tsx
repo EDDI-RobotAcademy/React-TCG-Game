@@ -10,15 +10,6 @@ import myCardButton from '../assets/eddi_tcg_game/images/main_lobby/myCardButton
 import shopButton from '../assets/eddi_tcg_game/images/main_lobby/shopButton.png';
 import {Button, Grid} from "@mui/material";
 
-// const Container = styled.div`
-//     width: 100%;
-//     height: 100vh;
-//     background-image: url('/assets/eddi_tcg_game/images/main_lobby/battle_lobby_background.png');
-//     background-size: cover;
-//     background-repeat: no-repeat;
-//     background-position: center;
-// `;
-
 const RotatingBox: React.FC = () => {
     const boxRef = React.useRef<THREE.Mesh>(null);
 

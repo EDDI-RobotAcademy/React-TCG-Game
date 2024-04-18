@@ -2,11 +2,17 @@ import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
 import useYourHandStore from "./state/store";
+import CardAttachedShape from "./CardAttachedShape";
+import getCardInfo, {getCardKinds} from "../common/CardInfoReader";
+import BattleFieldCardGenerator from "../card_generator/BattleFieldCardGenerator";
+import BattleFieldCardRepository from "../battle_field_card/infra/BattleFieldCardRepository";
+
+const battleFieldCardRepository = new BattleFieldCardRepository();
+const cardWidth = 105
 
 // 다음 카드의 위치를 계산하는 함수
 const getNextPosition = (index: number): { x: number; y: number } => {
-    const cardWidth = 105; // 카드의 너비
-    const cardHeight = cardWidth * 1.615; // 카드의 높이
+    const cardHeight = cardWidth * 1.515; // 카드의 높이
     const rowSize = 5; // 시야에 보이는 행의 카드 수
 
     // 행과 열 계산
@@ -34,7 +40,7 @@ const getNextPosition = (index: number): { x: number; y: number } => {
 
     // 카드의 x, y 좌표 계산
     const x = start_x + index * (cardWidth + each_margin_ratio * window.innerWidth);
-    const y = 0.08950920245 * window.innerHeight;
+    const y = 0.10950920245 * window.innerHeight;
 
     console.log('cardWidth + each_margin_ratio * window.innerWidth: ', cardWidth + each_margin_ratio * window.innerWidth)
     console.log('each_margin_ratio * window.innerWidth: ', each_margin_ratio * window.innerWidth)
@@ -59,10 +65,10 @@ const createBattleFieldCardMesh = (texture: THREE.Texture, cardIndex: number): T
     // 427 / 1600 = 0.266875 -> 427 + 65 / 1600 -> 492 / 1600 = 0.3075
     // 1108 / 1600 = 0.6925
 
-    const width = 105
-    const height = width * 1.615
+    // const cardWidth = 105
+    const height = cardWidth * 1.618
 
-    const geometry = new THREE.PlaneGeometry(width, height);
+    const geometry = new THREE.PlaneGeometry(cardWidth, height);
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture });
     const cardMesh = new THREE.Mesh(geometry, material);
     // cardMesh.position.set(0.3075 * window.innerWidth, 0.15950920245 * window.innerHeight, 0); // 카드의 위치 설정
@@ -71,10 +77,12 @@ const createBattleFieldCardMesh = (texture: THREE.Texture, cardIndex: number): T
 };
 
 const PickableYourHandCard: React.FC = () => {
+    const [cardAttachedList, setCardAttachedList] = useState<any>(null);
+
     // 상태를 가져옵니다.
     const yourHandList = useYourHandStore(state => state.yourHandList);
     const { scene, camera, gl } = useThree();
-    const [cards, setCards] = useState<THREE.Mesh[]>([]);
+    const [cardList, setCardList] = useState<{ mesh: THREE.Mesh; index: number }[]>([]);
     const [selectedCard, setSelectedCard] = useState<THREE.Mesh | null>(null);
     const [mouseDown, setMouseDown] = useState<boolean>(false);
 
@@ -83,39 +91,93 @@ const PickableYourHandCard: React.FC = () => {
     // 카드 생성 및 렌더링
     useEffect(() => {
         const loadCards = async () => {
-            const newCards: THREE.Mesh[] = [];
+            const cardGenerator = new BattleFieldCardGenerator(scene);
+            const newCardList: { mesh: THREE.Mesh, index: number }[] = [];
+
             for (let cardIndex = 0; cardIndex < yourHandList.length; cardIndex++) {
                 const cardId = yourHandList[cardIndex];
+
+                const cardKinds = getCardKinds(cardId);
+                console.log('cardKinds: ', cardKinds)
+
                 const imagePath = `/assets/eddi_tcg_game/images/battle_field_card/${cardId}.png`;
                 const texture = await loadImageTexture(imagePath);
                 const cardMesh = createBattleFieldCardMesh(texture, cardIndex); // index 전달
-                scene.add(cardMesh); // 카드를 scene에 추가
-                newCards.push(cardMesh);
+
+                const cardAttachedList = await cardGenerator.generateCard(cardId.toString(), cardIndex, cardKinds, cardMesh.position);
+
+                scene.add(cardMesh)
+                // newCardList.push(cardMesh)
+
+                const cardObject = { mesh: cardMesh, index: cardIndex };
+                newCardList.push(cardObject);
+
+                battleFieldCardRepository.addCardAttachedInfo(cardAttachedList)
             }
-            setCards(newCards);
+            setCardList(newCardList);
         };
         loadCards();
-    }, [yourHandList, scene]);
+    }, [yourHandList]);
 
-    // 마우스 이벤트 핸들러
     const handleMouseDown = (event: MouseEvent) => {
+        console.log('마우스 클릭 이벤트 발생:', event.button);
         event.preventDefault();
+
+        // 마우스 버튼에 따라 다른 동작 수행
+        switch (event.button) {
+            case 0: // 좌클릭
+                handleLeftClick(event);
+                break;
+            case 2: // 우클릭
+                handleRightClick(event);
+                break;
+            default:
+                break;
+        }
+    };
+
+    // 좌클릭 처리
+    const handleLeftClick = (event: MouseEvent) => {
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / gl.domElement.clientWidth) * 2 - 1;
         mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
 
-        console.log('event.clientX: ', event.clientX, ', event.clientY: ', event.clientY)
-        // console.log('mouse.x: ', mouse.x, ', mouse.y: ', mouse.y)
-
         raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(cards);
+
+        const meshes = cardList.map(cardObject => cardObject.mesh);
+        const index = cardList.map(cardObject => cardObject.index);
+        const intersects = raycaster.intersectObjects(meshes);
+
         if (intersects.length > 0) {
-            console.log('object selected!')
             const selectedObject = intersects[0].object as THREE.Mesh;
+
+            const selectedCardObject = cardList.find(cardObject => cardObject.mesh === selectedObject);
+            const index = selectedCardObject?.index;
+            console.log('좌클릭: 오브젝트 선택됨, 카드 인덱스:', index);
+
             setSelectedCard(selectedObject);
             setMouseDown(true);
             setStartPosition({ x: event.clientX, y: event.clientY });
+        }
+    };
+
+    // 우클릭 처리
+    const handleRightClick = (event: MouseEvent) => {
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        mouse.x = (event.clientX / gl.domElement.clientWidth) * 2 - 1;
+        mouse.y = -(event.clientY / gl.domElement.clientHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        const meshes = cardList.map(cardObject => cardObject.mesh);
+        const intersects = raycaster.intersectObjects(meshes);
+
+        if (intersects.length > 0) {
+            console.log('우클릭: 오브젝트 선택됨');
+            // 우클릭 처리 추가
+            // 여기에 원하는 우클릭 동작을 추가합니다.
         }
     };
 
@@ -138,6 +200,25 @@ const PickableYourHandCard: React.FC = () => {
         selectedCard.position.x += mouseX;
         selectedCard.position.y -= mouseY;
 
+        const selectedCardObject = cardList.find(cardObject => cardObject.mesh === selectedCard);
+
+
+        if (selectedCardObject) {
+            const index = selectedCardObject.index;
+            const cardAttachedList = battleFieldCardRepository.getCardAttachedInfo(index.toString())
+
+            cardAttachedList?.attachedMeshes?.forEach(attachedMesh => {
+                // 각 부착된 메시의 위치를 업데이트합니다.
+                attachedMesh.mesh.position.x += mouseX;
+                attachedMesh.mesh.position.y -= mouseY;
+                console.log('attachedMesh: ', attachedMesh)
+
+
+            });
+
+            setCardAttachedList(cardAttachedList);
+        }
+
         setStartPosition({ x: event.clientX, y: event.clientY });
     };
 
@@ -157,11 +238,7 @@ const PickableYourHandCard: React.FC = () => {
         };
     }, [gl, handleMouseDown, handleMouseMove, handleMouseUp]);
 
-    return null; // react-three-fiber에서는 렌더링할 JSX가 필요하지 않습니다.
+    return null;
 };
 
 export default PickableYourHandCard;
-
-
-
-

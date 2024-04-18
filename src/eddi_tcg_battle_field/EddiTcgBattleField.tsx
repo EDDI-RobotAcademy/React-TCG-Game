@@ -14,7 +14,7 @@ const BattleFieldScene: React.FC = () => {
 
     // 초기값을 설정합니다.
     useEffect(() => {
-        initYourHand([19, 134, 2, 31, 32]);
+        initYourHand([19, 151, 2, 8, 93]);
     }, [initYourHand]);
 
     // WebGLRenderingContext 초기화를 위한 초기화 함수
@@ -37,9 +37,6 @@ const BattleFieldScene: React.FC = () => {
                 near={-1}  // 가까운 투영면
                 far={1}  // 먼 투영면
             />
-            {/*<ambientLight intensity={0.5} />*/}
-            {/*<pointLight position={[10, 10, 10]} />*/}
-            {/*<ImagePlane frontImage={imagePath} backImage={cardBackFramePath} attackPowerImage={attackPowerImagePath} />*/}
             <PickableYourHandCard />
         </Canvas>
     );

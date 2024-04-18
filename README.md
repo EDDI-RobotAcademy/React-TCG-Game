@@ -2,6 +2,11 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## How to make every card info with csv  
+
+Go to $(TOPDIR)/python/useful_tool  
+execute python csv_to_javascript_convert.py *.csv  
+
 ## Available Scripts
 
 In the project directory, you can run:
