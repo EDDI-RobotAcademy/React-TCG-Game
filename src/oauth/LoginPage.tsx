@@ -1,35 +1,50 @@
-import { Box, Container } from "@mui/material";
+import { ChangeEvent, useState } from "react";
+import { Container, Typography, TextField, Button, Paper } from "@mui/material";
 import KakaoLogin from "./kakao/KakaoLogin";
-// import GoogleLogin from "oauth/google/GoogleLogin";
-// import NaverLogin from "oauth/naver/NaverLogin";
-
-import {useAuth} from "./state/AuthContext";
-import {getImageUrl} from "../aws/s3/aws_s3_utility";
+import { useAuth } from "./state/AuthContext";
 
 const LoginPage = () => {
     const { setIsLoggedIn } = useAuth();
+    const [email, setEmail] = useState("");
 
     const handleLoginSuccess = () => {
         setIsLoggedIn(true);
     };
 
+    const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+    };
+
     return (
-        <div className="login-container">
-            <img
-                className="login-background"
-                // src={getImageUrl("resources/LoginBackground.jpg")}
-                alt="Login Background"
-            />
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "100vh",
+            }}
+        >
             <Container maxWidth="xs">
-                <div className="login-icons">
-                    <div className="login-text">
-                        <h2>로그인·회원가입</h2>
-                        <span>내일부터 2주! 매일 업데이트되는 가격을 확인하세요</span>
+                <Paper elevation={3} style={{ padding: 24 }}>
+                    <Typography variant="h4" gutterBottom align="center">
+                        로그인·회원가입
+                    </Typography>
+                    <Typography variant="body1" align="center">
+                        내일부터 2주! 매일 업데이트되는 가격을 확인하세요
+                    </Typography>
+                    <div style={{ marginTop: 24 }}>
+                        <TextField
+                            fullWidth
+                            label="이메일 주소"
+                            variant="outlined"
+                            value={email}
+                            onChange={handleEmailChange}
+                            style={{ marginBottom: 16 }}
+                        />
+                        <KakaoLogin onSuccess={handleLoginSuccess} email={email} />
                     </div>
-                    <KakaoLogin onSuccess={handleLoginSuccess} />
-                    {/*<GoogleLogin onSuccess={handleLoginSuccess} />*/}
-                    {/*<NaverLogin onSuccess={handleLoginSuccess} />*/}
-                </div>
+                </Paper>
             </Container>
         </div>
     );
