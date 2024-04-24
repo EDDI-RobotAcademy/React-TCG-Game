@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import PickableYourHandCard from "../your_hand/PickableYourHandCard";
 import useYourHandStore from "../your_hand/state/store";
 import {WebGLRenderer} from "three";
+import YourFixedFieldUnitArea from "../your_field/YourFixedFieldUnitArea";
 
 const BattleFieldScene: React.FC = () => {
     // 상태를 가져옵니다.
@@ -14,7 +15,7 @@ const BattleFieldScene: React.FC = () => {
 
     // 초기값을 설정합니다.
     useEffect(() => {
-        initYourHand([19, 151, 2, 8, 93]);
+        initYourHand([19, 151, 2, 8, 93, 134]);
     }, [initYourHand]);
 
     // WebGLRenderingContext 초기화를 위한 초기화 함수
@@ -37,6 +38,7 @@ const BattleFieldScene: React.FC = () => {
                 near={-1}  // 가까운 투영면
                 far={1}  // 먼 투영면
             />
+            <YourFixedFieldUnitArea />
             <PickableYourHandCard />
         </Canvas>
     );

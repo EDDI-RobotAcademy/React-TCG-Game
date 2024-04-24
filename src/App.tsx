@@ -7,6 +7,8 @@ import NavigationBar from "./layout/NavigationLayout";
 import EddiTcgCardShop from "./eddi_tcg_card_shop/EddiTcgCardShop";
 import EddiTcgMyCard from "./eddi_tcg_my_card/EddiTcgMyCard";
 import EddiTcgBattleField from "./eddi_tcg_battle_field/EddiTcgBattleField";
+import LoginPage from "./oauth/LoginPage";
+import AfterKakaoLoginRequest from "./oauth/kakao/AfterKakaoLoginRequest";
 
 const theme = createTheme({
     typography: {
@@ -24,6 +26,8 @@ const App: React.FC = () => {
                     <Route path="/eddi-tcg-my-card" element={<EddiTcgMyCardWithNavigationBar />} />
                     <Route path="/eddi-tcg-card-shop" element={<EddiTcgCardShopWithNavigationBar />} />
                     <Route path="/eddi-tcg-battle-field" element={<EddiTcgBattleField />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/kakao" element={<AfterKakaoLoginRequest />} />
                 </Routes>
             </BrowserRouter>
         </ThemeProvider>
