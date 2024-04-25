@@ -1,10 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import {useStore} from "./store";
 
 const YourFixedFieldUnitArea: React.FC = () => {
     const { scene } = useThree();
     const rectangleRef = useRef<THREE.Mesh>();
+    const { rectanglePosition, setRectanglePosition } = useStore(); // Zustand store 사용
+
 
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
@@ -22,6 +25,8 @@ const YourFixedFieldUnitArea: React.FC = () => {
         scene.add(rectangle); // 씬에 추가
 
         rectangleRef.current = rectangle;
+
+        setRectanglePosition({ x: rectangle.position.x, y: rectangle.position.y });
 
         return () => {
             scene.remove(rectangle); // 컴포넌트가 언마운트되면 사각형 제거

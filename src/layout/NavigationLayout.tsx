@@ -1,8 +1,8 @@
 import React from 'react';
-import {AppBar, Toolbar, Typography, Link, Button, IconButton} from '@mui/material';
-import {useAuth} from "../oauth/state/AuthContext";
-import { Logout, Login } from '@mui/icons-material'
-import {useNavigate} from "react-router-dom";
+import { AppBar, Toolbar, Typography, Link, Button } from '@mui/material';
+import { Logout, Login } from '@mui/icons-material';
+import { useAuth } from "../oauth/state/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AuthButton: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
     const navigate = useNavigate(); // useNavigate 훅 사용
@@ -35,11 +35,7 @@ const AuthButton: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
 };
 
 const NavigationBar: React.FC = () => {
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
-
-    // const handleLogout = () => {
-    //
-    // };
+    const { isLoggedIn } = useAuth();
 
     return (
         <AppBar position="static">
@@ -48,12 +44,14 @@ const NavigationBar: React.FC = () => {
                     EDDI-TCG
                 </Typography>
                 <div>
-                    <Link href="/" color="inherit" underline="none" sx={{mr: 2}}>
+                    <Link href="/" color="inherit" underline="none" sx={{ mr: 2 }}>
                         Home
                     </Link>
-                    <Link href="/eddi-tcg-main-lobby" color="inherit" underline="none" sx={{mr: 2}}>
-                        Main Lobby
-                    </Link>
+                    {isLoggedIn && (
+                        <Link href="/eddi-tcg-main-lobby" color="inherit" underline="none" sx={{ mr: 2 }}>
+                            Main Lobby
+                        </Link>
+                    )}
                     <AuthButton isLoggedIn={isLoggedIn}/>
                 </div>
             </Toolbar>
