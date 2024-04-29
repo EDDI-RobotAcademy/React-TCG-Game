@@ -1,16 +1,17 @@
 import create from 'zustand';
 
-interface RectanglePosition {
+export interface Vertex {
     x: number;
     y: number;
 }
 
+// 사각형을 표현하는 상태와 함수를 정의하는 인터페이스
 interface StoreState {
-    rectanglePosition: RectanglePosition;
-    setRectanglePosition: (position: RectanglePosition) => void;
+    vertices: Vertex[]; // 사각형의 4개 정점
+    setVertices: (vertices: Vertex[]) => void; // 정점을 업데이트하는 함수
 }
 
-export const useStore = create<StoreState>((set) => ({
-    rectanglePosition: { x: 0, y: 0 },
-    setRectanglePosition: (position: RectanglePosition) => set({ rectanglePosition: position }),
+export const useYourFixedFieldUnitAreaVerticesStore = create<StoreState>((set) => ({
+    vertices: [],
+    setVertices: (vertices) => set({ vertices }),
 }));

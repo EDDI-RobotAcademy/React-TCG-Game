@@ -7,6 +7,8 @@ import getCardInfo, {getCardKinds} from "../common/CardInfoReader";
 import BattleFieldCardGenerator from "../card_generator/BattleFieldCardGenerator";
 import BattleFieldCardRepository from "../battle_field_card/infra/BattleFieldCardRepository";
 
+import {useYourFixedFieldUnitAreaVerticesStore, Vertex} from '../your_field/store';
+
 const battleFieldCardRepository = new BattleFieldCardRepository();
 const cardWidth = 105
 
@@ -87,6 +89,24 @@ const PickableYourHandCard: React.FC = () => {
     const [mouseDown, setMouseDown] = useState<boolean>(false);
 
     const [startPosition, setStartPosition] = useState<{ x: number; y: number } | null>(null);
+    const { vertices } = useYourFixedFieldUnitAreaVerticesStore(); // 배틀 필드 영역의 위치 가져오기
+
+    // 배틀 필드 영역 내에 들어왔는지 확인하는 함수
+    const checkIfInArea = (position: { x: number; y: number }, vertices: Vertex[]): boolean => {
+        const { x, y } = position;
+
+        // 사각형의 네 개의 정점 좌표를 가져옵니다.
+        const [topLeft, topRight, bottomLeft, bottomRight] = vertices;
+
+        // 정점을 이용하여 사각형의 경계를 정의합니다.
+        const minX = Math.min(topLeft.x, topRight.x, bottomLeft.x, bottomRight.x);
+        const maxX = Math.max(topLeft.x, topRight.x, bottomLeft.x, bottomRight.x);
+        const minY = Math.min(topLeft.y, topRight.y, bottomLeft.y, bottomRight.y);
+        const maxY = Math.max(topLeft.y, topRight.y, bottomLeft.y, bottomRight.y);
+
+        // 사각형 경계 내부에 있는지 확인합니다.
+        return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    };
 
     // 카드 생성 및 렌더링
     useEffect(() => {
@@ -193,9 +213,13 @@ const PickableYourHandCard: React.FC = () => {
         console.log('startPosition.x: ', startPosition?.x, 'startPosition.y: ', startPosition?.y)
         console.log('window.innerWidth: ', window.innerWidth, 'window.innerHeight: ', window.innerHeight)
 
-        const aspect = window.innerWidth / window.innerHeight;
-        const deltaX = (2 * aspect * mouseX) / window.innerWidth;
-        const deltaY = (aspect * mouseY) / window.innerHeight;
+        const newX = selectedCard.position.x + mouseX;
+        const newY = selectedCard.position.y - mouseY;
+
+        const inArea = checkIfInArea({ x: newX, y: newY }, vertices);
+
+        // console.log로 inArea 여부 출력
+        console.log('inArea:', inArea);
 
         selectedCard.position.x += mouseX;
         selectedCard.position.y -= mouseY;
