@@ -1,5 +1,7 @@
-import { ChangeEvent, useState } from "react";
-import { Container, Typography, TextField, Button, Paper } from "@mui/material";
+// LoginPage.tsx
+
+import React, { useState } from "react";
+import { Container, Typography, Paper } from "@mui/material";
 import KakaoLogin from "./kakao/KakaoLogin";
 import { useAuth } from "./state/AuthContext";
 
@@ -8,11 +10,9 @@ const LoginPage = () => {
     const [email, setEmail] = useState("");
 
     const handleLoginSuccess = () => {
+        // 로그인 성공 시 email을 localStorage에 저장
+        localStorage.setItem("email", email);
         setIsLoggedIn(true);
-    };
-
-    const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value);
     };
 
     return (
@@ -34,15 +34,7 @@ const LoginPage = () => {
                         내일부터 2주! 매일 업데이트되는 가격을 확인하세요
                     </Typography>
                     <div style={{ marginTop: 24 }}>
-                        <TextField
-                            fullWidth
-                            label="이메일 주소"
-                            variant="outlined"
-                            value={email}
-                            onChange={handleEmailChange}
-                            style={{ marginBottom: 16 }}
-                        />
-                        <KakaoLogin onSuccess={handleLoginSuccess} email={email} />
+                        <KakaoLogin onSuccess={handleLoginSuccess} setEmail={setEmail} />
                     </div>
                 </Paper>
             </Container>
