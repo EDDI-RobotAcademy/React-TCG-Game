@@ -12,6 +12,7 @@ import YourFixedFieldUnitArea from "../your_field/YourFixedFieldUnitArea";
 const BattleFieldScene: React.FC = () => {
     // 상태를 가져옵니다.
     const initYourHand = useYourHandStore(state => state.initHand);
+    const canvasRef = useRef<HTMLCanvasElement>(null)
 
     // 초기값을 설정합니다.
     useEffect(() => {
@@ -27,14 +28,21 @@ const BattleFieldScene: React.FC = () => {
     console.log(window.innerHeight);
 
     return (
-        <Canvas style={{width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0, backgroundColor: 'rgba(255, 255, 255, 0)'}}
-                onCreated={({ gl }) => initGL(gl)}>
+        <Canvas ref={canvasRef} style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0, backgroundColor: 'rgba(255, 255, 255, 0)' }}
+                onCreated={({ gl, camera }) => {
+                    initGL(gl);
+                    const rect = canvasRef.current?.getBoundingClientRect(); // Optional chaining을 사용합니다.
+                    if (rect) { // rect가 존재하는지 확인합니다.
+                        const { width, height } = rect;
+                        const aspect = width / height;
+                        // 실제 캔버스의 크기에 맞게 카메라 설정을 조정합니다.
+                        camera.position.x = width / 2; // 카메라의 위치를 조정합니다.
+                        camera.position.y = height / 2;
+                        camera.zoom = 1; // 줌 레벨을 조정합니다.
+                    }
+                }}>
             <OrthographicCamera
                 makeDefault  // 이 카메라를 기본 카메라로 설정합니다.
-                left={0}  // 뷰의 왼쪽 경계
-                right={window.innerWidth}  // 뷰의 오른쪽 경계
-                top={window.innerHeight}  // 뷰의 위쪽 경계
-                bottom={0}  // 뷰의 아래쪽 경계
                 near={-1}  // 가까운 투영면
                 far={1}  // 먼 투영면
             />

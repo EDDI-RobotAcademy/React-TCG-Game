@@ -85,11 +85,17 @@ const PickableYourHandCard: React.FC = () => {
     const yourHandList = useYourHandStore(state => state.yourHandList);
     const { scene, camera, gl } = useThree();
     const [cardList, setCardList] = useState<{ mesh: THREE.Mesh; index: number }[]>([]);
+
     const [selectedCard, setSelectedCard] = useState<THREE.Mesh | null>(null);
+    const [initialCardPosition, setInitialCardPosition] = useState<{ x: number; y: number } | null>(null);
+
     const [mouseDown, setMouseDown] = useState<boolean>(false);
 
     const [startPosition, setStartPosition] = useState<{ x: number; y: number } | null>(null);
     const { vertices } = useYourFixedFieldUnitAreaVerticesStore(); // 배틀 필드 영역의 위치 가져오기
+
+    const [loading, setLoading] = useState<boolean>(true)
+    const [addedCardIndexes, setAddedCardIndexes] = useState<number[]>([]);
 
     // 배틀 필드 영역 내에 들어왔는지 확인하는 함수
     const checkIfInArea = (position: { x: number; y: number }, vertices: Vertex[]): boolean => {
@@ -111,10 +117,14 @@ const PickableYourHandCard: React.FC = () => {
     // 카드 생성 및 렌더링
     useEffect(() => {
         const loadCards = async () => {
+            setLoading(true)
+
             const cardGenerator = new BattleFieldCardGenerator(scene);
             const newCardList: { mesh: THREE.Mesh, index: number }[] = [];
 
             for (let cardIndex = 0; cardIndex < yourHandList.length; cardIndex++) {
+                if (addedCardIndexes.includes(cardIndex)) continue
+
                 const cardId = yourHandList[cardIndex];
 
                 const cardKinds = getCardKinds(cardId);
@@ -122,7 +132,7 @@ const PickableYourHandCard: React.FC = () => {
 
                 const imagePath = `/assets/eddi_tcg_game/images/battle_field_card/${cardId}.png`;
                 const texture = await loadImageTexture(imagePath);
-                const cardMesh = createBattleFieldCardMesh(texture, cardIndex); // index 전달
+                const cardMesh = createBattleFieldCardMesh(texture, cardIndex);
 
                 const cardAttachedList = await cardGenerator.generateCard(cardId.toString(), cardIndex, cardKinds, cardMesh.position);
 
@@ -135,12 +145,13 @@ const PickableYourHandCard: React.FC = () => {
                 battleFieldCardRepository.addCardAttachedInfo(cardAttachedList)
             }
             setCardList(newCardList);
+            setLoading(false)
         };
         loadCards();
-    }, [yourHandList]);
+    }, []);
 
     const handleMouseDown = (event: MouseEvent) => {
-        console.log('마우스 클릭 이벤트 발생:', event.button);
+        console.log('마우스 클릭 이벤트 발생:', event.clientX, event.clientY);
         event.preventDefault();
 
         // 마우스 버튼에 따라 다른 동작 수행
@@ -173,6 +184,7 @@ const PickableYourHandCard: React.FC = () => {
             const selectedObject = intersects[0].object as THREE.Mesh;
 
             const selectedCardObject = cardList.find(cardObject => cardObject.mesh === selectedObject);
+            setInitialCardPosition({ x: selectedObject.position.x, y: selectedObject.position.y });
             const index = selectedCardObject?.index;
             console.log('좌클릭: 오브젝트 선택됨, 카드 인덱스:', index);
 
@@ -196,16 +208,13 @@ const PickableYourHandCard: React.FC = () => {
 
         if (intersects.length > 0) {
             console.log('우클릭: 오브젝트 선택됨');
-            // 우클릭 처리 추가
-            // 여기에 원하는 우클릭 동작을 추가합니다.
         }
     };
 
     const handleMouseMove = (event: MouseEvent) => {
         event.preventDefault();
         if (!mouseDown || !selectedCard) return;
-
-        console.log('move it!')
+        console.log('마우스 이동');
 
         const mouseX = event.clientX - (startPosition?.x || 0);
         const mouseY = event.clientY - (startPosition?.y || 0);
@@ -216,16 +225,10 @@ const PickableYourHandCard: React.FC = () => {
         const newX = selectedCard.position.x + mouseX;
         const newY = selectedCard.position.y - mouseY;
 
-        const inArea = checkIfInArea({ x: newX, y: newY }, vertices);
-
-        // console.log로 inArea 여부 출력
-        console.log('inArea:', inArea);
-
         selectedCard.position.x += mouseX;
         selectedCard.position.y -= mouseY;
 
         const selectedCardObject = cardList.find(cardObject => cardObject.mesh === selectedCard);
-
 
         if (selectedCardObject) {
             const index = selectedCardObject.index;
@@ -236,8 +239,6 @@ const PickableYourHandCard: React.FC = () => {
                 attachedMesh.mesh.position.x += mouseX;
                 attachedMesh.mesh.position.y -= mouseY;
                 console.log('attachedMesh: ', attachedMesh)
-
-
             });
 
             setCardAttachedList(cardAttachedList);
@@ -247,7 +248,33 @@ const PickableYourHandCard: React.FC = () => {
     };
 
     const handleMouseUp = () => {
+        console.log('마우스 떼기');
         setMouseDown(false);
+
+        if (selectedCard && initialCardPosition) {
+            const inArea = checkIfInArea({ x: selectedCard.position.x, y: selectedCard.position.y }, vertices);
+            console.log('카드를 놓은 위치:', selectedCard.position.x, selectedCard.position.y);
+            console.log('카드를 놓은 위치가 영역 내에 있는지:', inArea ? 'your field 영역 내에 있습니다' : 'your field 영역 밖에 있습니다');
+
+            if (!inArea) {
+                // 영역 밖에 있으면 초기 위치로 되돌립니다.
+                selectedCard.position.set(initialCardPosition.x, initialCardPosition.y, 0);
+
+                // 부착된 메시의 위치도 초기화합니다.
+                const selectedCardObject = cardList.find(cardObject => cardObject.mesh === selectedCard);
+                if (selectedCardObject) {
+                    const index = selectedCardObject.index;
+                    const cardAttachedList = battleFieldCardRepository.getCardAttachedInfo(index.toString());
+
+                    cardAttachedList?.attachedMeshes?.forEach(attachedMesh => {
+                        attachedMesh.mesh.position.set(initialCardPosition.x, initialCardPosition.y, 0);
+                    });
+
+                    setCardAttachedList(cardAttachedList);
+                }
+            }
+        }
+
         setSelectedCard(null);
     };
 
@@ -261,6 +288,34 @@ const PickableYourHandCard: React.FC = () => {
             gl.domElement.removeEventListener('mouseup', handleMouseUp);
         };
     }, [gl, handleMouseDown, handleMouseMove, handleMouseUp]);
+
+    // 카드의 위치를 카메라 시야 범위에 맞게 조정
+    // 카드의 위치를 카메라 시야 범위에 맞게 조정
+    useEffect(() => {
+        const handleResize = () => {
+            // 카드의 위치를 다시 계산하여 업데이트
+            const updateCardPositions = () => {
+                const newCardList = cardList.map(cardObject => {
+                    const { mesh, index } = cardObject;
+                    const { x, y } = getNextPosition(index);
+                    mesh.position.set(x, y, 0);
+                    return { mesh, index };
+                });
+                setCardList(newCardList);
+            };
+            updateCardPositions();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    if (loading) {
+        return null;
+    }
 
     return null;
 };
